@@ -1,0 +1,212 @@
+.sigma-profile-card {
+  position: absolute;
+  /* Positioning it to the left of the dropdown */
+  right: calc(100% + 15px); 
+  top: -5px;
+  width: 260px; /* Fixed width prevents the 'squashed' look */
+  background: #202123;
+  border: 1px solid #4d4d4f;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  animation: popLeft 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+}
+
+
+@keyframes popLeft {
+  from { opacity: 0; transform: scale(0.95) translateX(10px); }
+  to { opacity: 1; transform: scale(1) translateX(0); }
+}
+
+.card-body {
+  padding: 14px;
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0; /* Ensures the icon doesn't get squeezed */
+}
+
+.avatar-icon {
+  font-size: 40px;
+  color: #10a37f; /* ChatGPT Green */
+}
+
+.user-info-stack {
+  display: flex;
+  flex-direction: column; /* Forces vertical stacking */
+  text-align: left;
+  overflow: hidden;
+}
+
+.user-full-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ececf1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-email-address {
+  font-size: 0.75rem;
+  color: #9ea0a3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+
+.card-divider {
+  height: 1px;
+  background-color: #343541;
+}
+
+.card-footer-status {
+  padding: 10px 14px;
+  background-color: #171717;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.plan-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-indicator-dot {
+  width: 7px;
+  height: 7px;
+  background-color: #10a37f;
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgba(16, 163, 127, 0.5);
+}
+
+.plan-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #9ea0a3;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+}
+
+/* Suble hover effect for the card */
+.sigma-profile-card:hover {
+  border-color: #565869;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+  .sigma-profile-card {
+    /* Center the card on the page for better visibility on mobile */
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    right: auto;
+    transform: translate(-50%, -50%);
+    width: 280px;
+    max-width: calc(100vw - 40px);
+    z-index: 10001; /* Higher z-index to appear above everything */
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Add backdrop for mobile modal effect */
+  .sigma-profile-card::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+    animation: fadeIn 0.2s ease;
+    cursor: pointer; /* Indicate it's clickable */
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 480px) {
+  .sigma-profile-card {
+    width: 260px;
+    max-width: calc(100vw - 30px);
+    padding: 0;
+  }
+
+  .card-body {
+    padding: 16px;
+  }
+
+  .user-section {
+    gap: 12px;
+  }
+
+  .avatar-icon {
+    font-size: 42px;
+  }
+
+  .user-full-name {
+    font-size: 0.95rem;
+  }
+
+  .user-email-address {
+    font-size: 0.8rem;
+  }
+
+  .card-footer-status {
+    padding: 12px 16px;
+  }
+
+  .plan-label {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .sigma-profile-card {
+    width: 240px;
+    max-width: calc(100vw - 20px);
+  }
+
+  .card-body {
+    padding: 14px;
+  }
+
+  .user-section {
+    gap: 10px;
+  }
+
+  .avatar-icon {
+    font-size: 38px;
+  }
+
+  .user-full-name {
+    font-size: 0.9rem;
+  }
+
+  .user-email-address {
+    font-size: 0.75rem;
+  }
+
+  .card-footer-status {
+    padding: 10px 14px;
+  }
+
+  .plan-label {
+    font-size: 0.65rem;
+  }
+}

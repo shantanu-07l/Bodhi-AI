@@ -1,0 +1,192 @@
+:root {
+    --sidebar-bg: #171717;
+    --sidebar-width: 280px;
+    --transition-speed: 0.3s;
+    --border-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar {
+    background-color: var(--sidebar-bg);
+    width: var(--sidebar-width);
+    height: 100vh;
+    transition: width var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    border-right: 1px solid var(--border-color);
+    flex-shrink: 0;
+    /* Allows the button to stay visible even when sidebar width is 0 */
+    overflow: visible; 
+}
+
+
+.sidebar.collapsed {
+    width: 0;
+    border-right: none;
+}
+
+/* Toggle Button - The Reopen Logic */
+.toggle-btn {
+    position: absolute;
+    top: 15px;
+    /* When open, it sits inside. When closed, it stays at 15px from the left edge of the screen */
+    left: 15px; 
+    z-index: 1000;
+    background: #202123; /* Matching dark theme for better visibility */
+    border: 1px solid var(--border-color);
+    color: #fff;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+    background: #2a2b32;
+}
+
+/* Sidebar Inner Content */
+.sidebar-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: var(--sidebar-width);
+    padding-top: 70px; /* Space for the floating button */
+}
+
+.new-chat-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 15px 10px 15px;
+    padding: 12px;
+    border-radius: 8px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: #fff;
+    cursor: pointer;
+}
+
+.btn-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo {
+    height: 20px;
+    width: 20px;
+}
+
+.history {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 0 10px;
+    list-style: none;
+}
+
+.history li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    margin-bottom: 5px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.history li:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.highlighted {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.thread-title {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sign {
+    padding: 20px;
+    text-align: center;
+    font-size: 11px;
+    border-top: 1px solid var(--border-color);
+    color: #666;
+}
+
+/* Standard Scrollbar */
+.history::-webkit-scrollbar {
+    width: 4px;
+}
+.history::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+}
+
+/* ==================== MOBILE RESPONSIVE ==================== */
+@media (max-width: 768px) {
+    :root {
+        --sidebar-width: 100%;
+    }
+
+    .sidebar {
+        width: var(--sidebar-width);
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 999;
+        transform: translateX(0);
+        transition: transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+        width: var(--sidebar-width);
+        border-right: 1px solid var(--border-color);
+    }
+
+    .sidebar-content {
+        padding-top: 70px;
+    }
+
+    .new-chat-btn {
+        margin: 0 15px 10px 15px;
+    }
+
+    .history li {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .new-chat-btn {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .history li {
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    .btn-left {
+        gap: 8px;
+    }
+
+    .sign {
+        padding: 15px;
+        font-size: 10px;
+    }
+}
+
+.fa-trash:hover {
+    color: #f87171;
+}
