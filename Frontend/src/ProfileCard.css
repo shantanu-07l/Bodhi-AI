@@ -4,15 +4,15 @@
   right: calc(100% + 15px); 
   top: -5px;
   width: 260px; /* Fixed width prevents the 'squashed' look */
-  background: #202123;
-  border: 1px solid #4d4d4f;
-  border-radius: 10px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  background: var(--bg-dropdown);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  box-shadow: var(--glass-shadow);
   z-index: 10000;
-  animation: popLeft 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: popLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: auto;
 }
-
 
 @keyframes popLeft {
   from { opacity: 0; transform: scale(0.95) translateX(10px); }
@@ -38,7 +38,7 @@
 
 .avatar-icon {
   font-size: 40px;
-  color: #10a37f; /* ChatGPT Green */
+  color: var(--accent-primary);
 }
 
 .user-info-stack {
@@ -51,7 +51,7 @@
 .user-full-name {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #ececf1;
+  color: var(--text-main);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -59,7 +59,7 @@
 
 .user-email-address {
   font-size: 0.75rem;
-  color: #9ea0a3;
+  color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -68,14 +68,17 @@
 
 .card-divider {
   height: 1px;
-  background-color: #343541;
+  background-color: var(--border-glass);
 }
 
 .card-footer-status {
   padding: 10px 14px;
-  background-color: #171717;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
+  background-color: var(--bg-primary);
+  border-bottom-left-radius: var(--radius-md);
+  border-bottom-right-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .plan-pill {
@@ -87,22 +90,63 @@
 .status-indicator-dot {
   width: 7px;
   height: 7px;
-  background-color: #10a37f;
+  background-color: var(--accent-secondary);
   border-radius: 50%;
-  box-shadow: 0 0 5px rgba(16, 163, 127, 0.5);
+  box-shadow: 0 0 8px var(--accent-secondary);
+}
+
+.plan-pro .status-indicator-dot {
+  background-color: #6366f1;
+  box-shadow: 0 0 8px #6366f1;
+}
+
+.plan-ultra .status-indicator-dot {
+  background-color: #ec4899;
+  box-shadow: 0 0 8px #ec4899;
 }
 
 .plan-label {
   font-size: 0.65rem;
   font-weight: 700;
-  color: #9ea0a3;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05rem;
 }
 
-/* Suble hover effect for the card */
+.profile-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.profile-theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--theme-toggle-bg);
+  border: 1px solid var(--theme-toggle-border);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  color: var(--text-main);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.profile-theme-toggle-btn i {
+  color: var(--theme-toggle-icon);
+  font-size: 0.8rem;
+}
+
+.profile-theme-toggle-btn:hover {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+/* Subtle hover effect for the card */
 .sigma-profile-card:hover {
-  border-color: #565869;
+  border-color: rgba(99, 102, 241, 0.3);
 }
 
 /* ==================== RESPONSIVE DESIGN ==================== */
@@ -128,7 +172,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
     z-index: -1;
     animation: fadeIn 0.2s ease;
     cursor: pointer; /* Indicate it's clickable */
@@ -210,3 +255,4 @@
     font-size: 0.65rem;
   }
 }
+

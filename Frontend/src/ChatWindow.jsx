@@ -5,6 +5,7 @@ import { useContext, useEffect, useState, useRef } from "react";
 import { ScaleLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
 import ProfileCard from "./ProfileCard.jsx";
+import SettingsModal from "./SettingsModal.jsx";
 import api, { setAccessToken } from "./services/api";
 
 
@@ -18,11 +19,15 @@ export default function ChatWindow() {
     setPrevChats,
     setNewChat,
     setIsAuthenticated,
+    theme,
+    toggleTheme,
   } = useContext(MyContext);
 
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [showCard, setShowCard] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [settingsTab, setSettingsTab] = useState("appearance");
   const [isRecording, setIsRecording] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -39,7 +44,6 @@ export default function ChatWindow() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
 
   const fetchAIReply = async (messageText) => {
 
@@ -77,7 +81,6 @@ export default function ChatWindow() {
     }
 
 };
-  
 
   const getReply = () => fetchAIReply(prompt);
 
@@ -168,7 +171,6 @@ export default function ChatWindow() {
     }
 
 };
-  
 
   useEffect(() => {
     if (prompt && reply) {
@@ -201,13 +203,11 @@ export default function ChatWindow() {
     navigate("/login");
 
     };
-  
 
   return (
     <div className="chatWindow">
       <nav className="navbar">
-        {/* Placeholder for left-side brand/title if needed, 
-            keeping it empty ensures the next div goes to the right */}
+        {/* Placeholder for left-side brand/title if needed */}
         <div className="nav-left"></div>
 
         <div className="nav-right">
@@ -219,11 +219,27 @@ export default function ChatWindow() {
 
           {isOpen && (
             <div className="dropDown">
-              {!isMobile && showCard && <ProfileCard />}
+              {!isMobile && showCard && (
+                <ProfileCard 
+                  onClose={() => setShowCard(false)}
+                  onOpenSettings={(tab) => {
+                    setSettingsTab(tab || "appearance");
+                    setIsSettingsOpen(true);
+                    setIsOpen(false);
+                  }}
+                />
+              )}
               <div className="dropDownItem" onClick={() => setShowCard(!showCard)}>
                 <i className="fa-solid fa-circle-user"></i> Profile
               </div>
-              <div className="dropDownItem">
+              <div 
+                className="dropDownItem" 
+                onClick={() => {
+                  setSettingsTab("appearance");
+                  setIsSettingsOpen(true);
+                  setIsOpen(false);
+                }}
+              >
                 <i className="fa-solid fa-gear"></i> Settings
               </div>
               <div className="dropDownItem logout" onClick={handleLogOut}>
@@ -235,7 +251,24 @@ export default function ChatWindow() {
       </nav>
 
       {/* Mobile ProfileCard - Rendered outside dropdown for centering */}
-      {showCard && isMobile && <ProfileCard onClose={() => setShowCard(false)} />}
+      {showCard && isMobile && (
+        <ProfileCard 
+          onClose={() => setShowCard(false)} 
+          onOpenSettings={(tab) => {
+            setSettingsTab(tab || "appearance");
+            setIsSettingsOpen(true);
+            setShowCard(false);
+          }}
+        />
+      )}
+
+      {/* Global Settings Modal */}
+      {isSettingsOpen && (
+        <SettingsModal 
+          onClose={() => setIsSettingsOpen(false)} 
+          initialTab={settingsTab}
+        />
+      )}
 
       <main className="chatArea">
         <Chat />
@@ -274,7 +307,7 @@ export default function ChatWindow() {
               </button>
             </div>
           </div>
-          <p className="disclaimer">SigmaGPT may display inaccurate info, so double-check its responses.</p>
+          <p className="disclaimer">Bodhi AI may display inaccurate info, so double-check its responses.</p>
         </div>
       </footer>
     </div>

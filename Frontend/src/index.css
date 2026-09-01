@@ -1,1 +1,104 @@
+/* Central Design Tokens for Bodhi AI */
+:root, [data-theme="dark"] {
+  /* Colors - Dark Mode (Default) */
+  --bg-primary: #090a0f;
+  --bg-secondary: #111218;
+  --bg-sidebar: rgba(9, 10, 15, 0.75);
+  --bg-input: rgba(22, 24, 35, 0.6);
+  --bg-dropdown: rgba(22, 24, 35, 0.85);
+  
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(99, 102, 241, 0.15);
+  
+  --accent-primary: #6366f1; /* Indigo */
+  --accent-secondary: #a855f7; /* Purple */
+  --accent-tertiary: #ec4899; /* Pink */
+  
+  --accent-gradient: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  --accent-glow-gradient: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary), var(--accent-tertiary));
+  
+  --text-main: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --heading-gradient: linear-gradient(135deg, #ffffff 60%, rgba(255, 255, 255, 0.7));
+  
+  /* Fonts */
+  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  
+  /* Backdrop effects */
+  --glass-blur: blur(20px);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --radius-pill: 32px;
 
+  --theme-toggle-bg: rgba(255, 255, 255, 0.08);
+  --theme-toggle-border: rgba(255, 255, 255, 0.12);
+  --theme-toggle-icon: #facc15;
+}
+
+[data-theme="light"] {
+  /* Colors - Light Mode */
+  --bg-primary: #f1f5f9;
+  --bg-secondary: #ffffff;
+  --bg-sidebar: rgba(255, 255, 255, 0.85);
+  --bg-input: rgba(255, 255, 255, 0.9);
+  --bg-dropdown: rgba(255, 255, 255, 0.95);
+  
+  --border-glass: rgba(0, 0, 0, 0.08);
+  --border-glow: rgba(99, 102, 241, 0.25);
+  
+  --text-main: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --heading-gradient: linear-gradient(135deg, #0f172a 60%, #4338ca);
+  
+  --glass-shadow: 0 8px 32px 0 rgba(99, 102, 241, 0.08);
+
+  --theme-toggle-bg: rgba(99, 102, 241, 0.1);
+  --theme-toggle-border: rgba(99, 102, 241, 0.2);
+  --theme-toggle-icon: #6366f1;
+}
+
+/* Global Reset overrides */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+}
+
+/* Custom Scrollbar for scrolling elements */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: var(--radius-pill);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.4);
+}

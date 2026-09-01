@@ -1,32 +1,39 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./Sidebar.css";
 import { MyContext } from "./MyContext.jsx";
 import { v1 as uuidv1 } from "uuid";
 import api from "./services/api";
 
 export default function Sidebar() {
+    const [userPlan, setUserPlan] = useState("free");
 
     const {
-
         allThreads,
-
         setAllThreads,
-
         currThreadId,
-
         setNewChat,
-
         setPrompt,
-
         setReply,
-
         setCurrThreadId,
-
         setPrevChats,
-
         isCollapsed,
-
+        theme,
+        toggleTheme,
     } = useContext(MyContext);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const { data } = await api.get("/user");
+                if (data?.plan) {
+                    setUserPlan(data.plan.toLowerCase());
+                }
+            } catch (err) {
+                console.error("Sidebar user fetch error:", err);
+            }
+        };
+        fetchUserData();
+    }, []);
 
     const getAllThreads = async () => {
 
@@ -155,6 +162,18 @@ export default function Sidebar() {
 
                 <div className="sidebar-content">
 
+                    <div className="sidebar-brand">
+                        <span className="brand-logo">
+                            <i className="fa-solid fa-compass-drafting"></i>
+                        </span>
+                        <div className="brand-text-wrapper">
+                            <span className="brand-name">Bodhi AI</span>
+                            <span className={`plan-version-badge plan-badge-${userPlan}`}>
+                                {userPlan}
+                            </span>
+                        </div>
+                    </div>
+
                     <button
 
                         className="new-chat-btn"
@@ -247,14 +266,19 @@ export default function Sidebar() {
 
                     </ul>
 
-                    <div className="sign">
+                    <div className="sidebar-footer">
+                        <button 
+                            className="sidebar-theme-toggle" 
+                            onClick={toggleTheme}
+                            title={`Switch to ${theme === "dark" ? "Light" : "Dark"} mode`}
+                        >
+                            <i className={`fa-solid ${theme === "dark" ? "fa-sun" : "fa-moon"}`}></i>
+                            <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+                        </button>
 
-                        <p>
-
-                            By Parth Khandelwal ♥
-
-                        </p>
-
+                        <div className="sign">
+                            <p>By Shantanu Sapkal ♥</p>
+                        </div>
                     </div>
 
                 </div>

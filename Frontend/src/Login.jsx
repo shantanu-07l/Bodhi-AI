@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import "./Login.css";
-import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api, { setAccessToken } from "./services/api";
+import { MyContext } from "./MyContext";
 
 const Login = ({ setIsAuthenticated }) => {
 
     const navigate = useNavigate();
+    const { theme, toggleTheme } = useContext(MyContext);
 
     const [formData, setFormData] = useState({
         email: "",
@@ -93,7 +94,7 @@ const Login = ({ setIsAuthenticated }) => {
 
                 <header className="auth-header">
 
-                    <div className="auth-logo">Σ</div>
+                    <div className="auth-logo">B</div>
 
                     <h1 className="auth-title">
 

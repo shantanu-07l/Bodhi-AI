@@ -54,6 +54,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null,
     },
+    plan: {
+        type: String,
+        enum: ["free", "pro", "ultra"],
+        default: "free",
+    },
     threads: [ThreadSchema],
     createdAt: {
         type: Date,

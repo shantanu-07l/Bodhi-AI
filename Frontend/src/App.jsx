@@ -28,6 +28,25 @@ function App() {
   
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Theme Management (Dark / Light)
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) return savedTheme;
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches
+      ? "light"
+      : "dark";
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
+  };
+
   const providerValues = {
     prompt,
     setPrompt,
@@ -45,7 +64,11 @@ function App() {
     setIsAuthenticated,
     isCollapsed,
     setIsCollapsed,
+    theme,
+    setTheme,
+    toggleTheme,
   };
+
   useEffect(() => {
 
     const checkLogin = async () => {
@@ -73,30 +96,30 @@ function App() {
 }, []);
 
   return (
-    <Router>
-      <Routes>
-        {/* Login Route */}
-        <Route
-          path="/login"
-          element={!isAuthenticated ?
-              <Login setIsAuthenticated={setIsAuthenticated} />: <Navigate to={"/chat"}/>
-          }
-        />
+    <MyContext.Provider value={providerValues}>
+      <Router>
+        <Routes>
+          {/* Login Route */}
+          <Route
+            path="/login"
+            element={!isAuthenticated ?
+                <Login setIsAuthenticated={setIsAuthenticated} />: <Navigate to={"/chat"}/>
+            }
+          />
 
-        {/* Signup Route */}
-        <Route 
-          path="/signin" 
-          element={!isAuthenticated ? 
-              <Signin setIsAuthenticated={setIsAuthenticated}/> : <Navigate to={"/chat"}/>
-          } 
-        />
+          {/* Signup Route */}
+          <Route 
+            path="/signin" 
+            element={!isAuthenticated ? 
+                <Signin setIsAuthenticated={setIsAuthenticated}/> : <Navigate to={"/chat"}/>
+            } 
+          />
 
-        {/* Protected Chat Route */}
-        <Route
-          path="/chat"
-          element={
-            isAuthenticated ? (
-              <MyContext.Provider value={providerValues}>
+          {/* Protected Chat Route */}
+          <Route
+            path="/chat"
+            element={
+              isAuthenticated ? (
                 <div className="app">
                   {/* Mobile Backdrop Overlay */}
                   {!isCollapsed && (
@@ -116,20 +139,20 @@ function App() {
                   <Sidebar />
                   <ChatWindow />
                 </div>
-              </MyContext.Provider>
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
 
-        {/* Root Redirect */}
-        <Route path="/" element={<Navigate to={"/login"} replace />} />
-        
-        {/* Catch-all for any other broken links */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
+          {/* Root Redirect */}
+          <Route path="/" element={<Navigate to={"/login"} replace />} />
+          
+          {/* Catch-all for any other broken links */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    </MyContext.Provider>
   );
 }
 

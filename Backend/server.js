@@ -3,6 +3,8 @@ import 'dotenv/config';
 import cors from 'cors';
 import cookieParser from "cookie-parser";
 import mongoose, { connect } from 'mongoose';
+import helmet from 'helmet';
+import mongoSanitize from 'express-mongo-sanitize';
 import chatRoutes from "./routes/chat.js";
 import userRoutes from "./routes/user.js";
 
@@ -13,8 +15,19 @@ const allowedOrigins = [
     ...(process.env.CLIENT_URL?.split(",") || [])
 ];
 
+// Security headers middleware
+app.use(helmet());
+
 app.use(express.json());
 app.use(cookieParser());
+
+// NoSQL Injection sanitizer (Express 5 compatible)
+app.use((req, res, next) => {
+    if (req.body) mongoSanitize.sanitize(req.body);
+    if (req.params) mongoSanitize.sanitize(req.params);
+    next();
+});
+
 app.use(cors({
   origin: function (origin, callback) {
 
@@ -24,7 +37,8 @@ app.use(cors({
     if (allowedOrigins.includes(origin))
         return callback(null, true);
 
-    if (origin.endsWith(".vercel.app"))
+    // Limit Vercel previews to this project's unique identifier to avoid wildcard exploits
+    if (origin.includes("bodhi-ai-eight") && origin.endsWith(".vercel.app"))
         return callback(null, true);
 
     return callback(new Error("Not allowed by CORS"));
@@ -36,10 +50,11 @@ app.use(cors({
 app.use("/", userRoutes);
 app.use("/api", chatRoutes);
 
-// app.post("/test", async (req, res) => {
-//     let response = getOpenAPIResponse(req.body.message);
-//     res.send(response);
-// });
+// Global Error Handler to avoid leaking absolute file paths or stack traces to clients
+app.use((err, req, res, next) => {
+    console.error("Internal Server Error:", err.stack || err);
+    res.status(500).json({ error: "Internal Server Error" });
+});
 
 
 const connectDB = async() => {

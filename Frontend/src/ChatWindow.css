@@ -1,31 +1,60 @@
-/* SigmaGPT Pro Styles */
+/* Bodhi AI ChatWindow Styles */
 .chatWindow {
-    background-color: #131314;
+    background-color: transparent;
     height: 100vh;
     width: 100%;
     display: flex;
     flex-direction: column;
-    color: #e3e3e3;
+    color: var(--text-main);
     overflow: hidden;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
-
-/* Navbar Enhancements */
+/* Navbar Style */
 .navbar {
-    padding: 12px 24px;
+    padding: 16px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: relative; /* Anchor for absolute elements */
-    z-index: 1000;
+    position: relative;
+    z-index: 998;
+    background: var(--bg-sidebar);
+    backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid var(--border-glass);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Right-side navigation container */
-.nav-right {
-    position: relative; /* CRITICAL: Anchors the dropdown to this spot */
+.nav-left {
     display: flex;
     align-items: center;
+    gap: 12px;
+}
+
+.nav-right {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Quick Theme Toggle Button */
+.theme-toggle-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--theme-toggle-bg);
+    border: 1px solid var(--theme-toggle-border);
+    color: var(--theme-toggle-icon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
 }
 
 .userIconDiv {
@@ -33,60 +62,93 @@
 }
 
 .userIcon {
-    background-color: #339cff;
+    background: var(--accent-gradient);
     height: 40px;
     width: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s, background-color 0.2s;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+}
+
+.userIcon i {
+    color: #fff;
 }
 
 .userIcon:hover {
-    transform: scale(1.05);
-    background-color: #4ba8ff;
+    transform: scale(1.08);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
 }
 
-/* Dropdown styling - Positioned relative to .nav-right */
+/* Glassmorphic Dropdown */
 .dropDown {
     position: absolute;
-    top: 50px; /* Distance from the top of the icon */
-    right: 0;   /* Align to the right edge of the icon */
-    background-color: #28292a;
-    border-radius: 12px;
+    top: 50px;
+    right: 0;
+    background: var(--bg-dropdown);
+    backdrop-filter: var(--glass-blur);
+    border-radius: var(--radius-md);
     padding: 8px;
     width: 200px;
     z-index: 2001;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: var(--glass-shadow);
+    border: 1px solid var(--border-glass);
+    animation: dropDownShow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dropDownShow {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .dropDownItem {
     padding: 10px 14px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 0.9rem;
-    transition: background 0.2s;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+}
+
+.dropDownItem i {
+    color: var(--text-muted);
+    font-size: 0.95rem;
 }
 
 .dropDownItem:hover {
-    background-color: #3c4043;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+}
+
+.dropDownItem:hover i {
+    color: var(--accent-primary);
 }
 
 .dropDownItem.logout:hover {
-    background-color: rgba(255, 75, 75, 0.1);
-    color: #ff4b4b;
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
 }
 
-/* Chat Body */
+.dropDownItem.logout:hover i {
+    color: #ef4444;
+}
+
+/* Chat Area */
 .chatArea {
     flex: 1;
     width: 100%;
-    overflow-y: auto; 
+    overflow-y: auto;
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
@@ -98,12 +160,14 @@
     justify-content: center;
 }
 
-/* --- GEMINI INPUT DESIGN --- */
+/* Floating Input Section */
 .chatInputSection {
     width: 100%;
-    padding-bottom: 24px;
+    padding-bottom: 28px;
+    padding-top: 10px;
     display: flex;
     justify-content: center;
+    background: linear-gradient(to top, var(--bg-primary) 70%, transparent);
 }
 
 .gemini-input-wrapper {
@@ -113,28 +177,35 @@
 }
 
 .input-pill {
-    background-color: #1e1f20;
-    border-radius: 32px;
+    background-color: var(--bg-input);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
-    padding: 8px 16px 8px 24px;
+    padding: 8px 12px 8px 24px;
     min-height: 56px;
-    transition: background-color 0.2s, box-shadow 0.2s;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
 .input-pill:focus-within {
-    background-color: #28292a;
-    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.3), 0 1px 3px 1px rgba(0,0,0,0.15);
+    border-color: rgba(99, 102, 241, 0.4);
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.15), var(--glass-shadow);
 }
 
 .input-pill input {
     flex: 1;
     background: transparent;
     border: none;
-    color: #e3e3e3;
-    font-size: 1rem;
+    color: var(--text-main);
+    font-size: 0.95rem;
     outline: none;
     padding: 12px 0;
+}
+
+.input-pill input::placeholder {
+    color: var(--text-muted);
 }
 
 .action-icons {
@@ -146,33 +217,36 @@
 .icon-btn {
     background: transparent;
     border: none;
-    color: #c4c7c5;
-    width: 44px;
-    height: 44px;
+    color: var(--text-muted);
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
-    transition: background-color 0.2s, color 0.2s;
+    font-size: 1.05rem;
+    transition: all 0.2s ease;
 }
 
 .icon-btn:hover {
-    background-color: rgba(255, 255, 255, 0.08);
-    color: #fff;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
 }
 
 .mic-btn.active {
-    color: #ff4b4b;
-    background-color: rgba(255, 75, 75, 0.1);
+    color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.1);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
 }
 
 .send-btn {
-    color: #4b90ff;
+    color: #fff;
+    background: var(--accent-gradient);
     opacity: 0.3;
     pointer-events: none;
     transform: scale(0.9);
+    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -182,61 +256,64 @@
     transform: scale(1);
 }
 
+.send-btn.visible:hover {
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    transform: translateY(-1px);
+}
+
 .recording-pulse {
-    outline: 2px solid rgba(255, 75, 75, 0.3);
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.15) !important;
 }
 
 .disclaimer {
     text-align: center;
     font-size: 0.75rem;
-    color: #9aa0a6;
+    color: var(--text-muted);
     margin-top: 12px;
 }
 
-/* Responsive */
+/* ==================== RESPONSIVE DESIGN ==================== */
 @media (max-width: 768px) {
-    .chatWindow {
-        height: 100vh;
-    }
-
     .navbar {
-        padding: 10px 16px;
+        padding: 14px 16px;
+        padding-left: 70px;
     }
 
     .userIcon {
         height: 36px;
         width: 36px;
-        font-size: 18px;
     }
 
     .dropDown {
         width: 180px;
-        top: 45px;
+        top: 48px;
     }
 
     .dropDownItem {
         padding: 8px 12px;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
 
     .gemini-input-wrapper {
-        padding: 0 15px;
+        padding: 0 16px;
     }
 
     .input-pill {
-        padding: 6px 12px 6px 20px;
+        padding: 6px 10px 6px 20px;
         min-height: 50px;
+        border-radius: var(--radius-md);
     }
 
     .input-pill input {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         padding: 10px 0;
     }
 
     .icon-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
+        width: 36px;
+        height: 36px;
+        font-size: 0.95rem;
     }
 
     .disclaimer {
@@ -244,112 +321,28 @@
     }
 }
 
-@media (max-width: 600px) {
-    .chatWindow {
-        background-color: #131314;
-    }
-
+@media (max-width: 480px) {
     .navbar {
-        padding: 8px 12px;
-    }
-
-    .userIcon {
-        height: 35px;
-        width: 35px;
-        font-size: 16px;
-    }
-
-    .userIconDiv {
-        padding: 4px;
+        padding: 12px 14px;
+        padding-left: 65px;
     }
 
     .dropDown {
-        width: 150px;
-        top: 42px;
-        right: -5px;
-    }
-
-    .dropDownItem {
-        padding: 8px 10px;
-        font-size: 0.8rem;
-        gap: 8px;
-    }
-
-    .dropDownItem i {
-        font-size: 0.9rem;
-    }
-
-    .gemini-input-wrapper {
-        padding: 0 12px;
+        width: 160px;
+        top: 45px;
     }
 
     .input-pill {
-        padding: 4px 10px 4px 16px;
-        min-height: 45px;
-        border-radius: 24px;
-    }
-
-    .input-pill input {
-        font-size: 0.9rem;
-        padding: 8px 0;
-    }
-
-    .input-pill input::placeholder {
-        font-size: 0.9rem;
-    }
-
-    .action-icons {
-        gap: 4px;
-    }
-
-    .icon-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 0.95rem;
-    }
-
-    .disclaimer {
-        font-size: 0.65rem;
-        margin-top: 8px;
-    }
-
-    .chatInputSection {
-        padding-bottom: 16px;
-    }
-
-    .chatArea {
-        overflow-y: auto;
-    }
-}
-
-@media (max-width: 400px) {
-    .navbar {
-        padding: 6px 10px;
-    }
-
-    .userIcon {
-        height: 32px;
-        width: 32px;
-        font-size: 14px;
-    }
-
-    .input-pill {
-        padding: 3px 8px 3px 14px;
-        min-height: 42px;
+        padding: 4px 8px 4px 16px;
+        min-height: 46px;
     }
 
     .input-pill input {
         font-size: 0.85rem;
-        padding: 6px 0;
-    }
-
-    .icon-btn {
-        width: 32px;
-        height: 32px;
-        font-size: 0.9rem;
     }
 
     .disclaimer {
-        font-size: 0.6rem;
+        font-size: 0.65rem;
     }
 }
+
