@@ -46,14 +46,12 @@ export default function ChatWindow() {
   }, []);
 
   const fetchAIReply = async (messageText) => {
-
-    if (!messageText.trim()) return;
+    if (!messageText.trim() || loading) return;
 
     setLoading(true);
     setNewChat(false);
 
     try {
-
         const { data } = await api.post(
             "/api/chat",
             {
@@ -63,23 +61,14 @@ export default function ChatWindow() {
         );
 
         setReply(data.reply);
-
     }
-
     catch (err) {
-
         console.error(err);
-
         alert("Failed to connect to AI.");
-
     }
-
     finally {
-
         setLoading(false);
-
     }
-
 };
 
   const getReply = () => fetchAIReply(prompt);
@@ -111,11 +100,9 @@ export default function ChatWindow() {
     }
   };
   const handleAudioUpload = async (blob) => {
-
     setLoading(true);
 
     const formData = new FormData();
-
     formData.append(
         "audio",
         blob,
@@ -123,53 +110,30 @@ export default function ChatWindow() {
     );
 
     try {
-
         const { data } = await api.post(
-
             "/api/transcribe",
-
             formData,
-
             {
-
                 headers: {
-
                     "Content-Type":
-
                     "multipart/form-data"
-
                 }
-
             }
-
         );
 
         if (data.transcript) {
-
             setPrompt(data.transcript);
-
             await fetchAIReply(
-
                 data.transcript
-
             );
-
         }
-
     }
-
     catch (err) {
-
         console.error(err);
-
     }
-
     finally {
-
         setLoading(false);
-
     }
-
 };
 
   useEffect(() => {
@@ -180,8 +144,9 @@ export default function ChatWindow() {
         { role: "assistant", content: reply },
       ]);
       setPrompt("");
+      setReply(null);
     }
-  }, [reply, prompt, setPrevChats, setPrompt]);
+  }, [reply, prompt, setPrevChats, setPrompt, setReply]);
 
   const handleLogOut = async () => {
 
