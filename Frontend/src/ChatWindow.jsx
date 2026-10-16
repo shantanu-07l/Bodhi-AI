@@ -6,10 +6,12 @@ import { ScaleLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
 import ProfileCard from "./ProfileCard.jsx";
 import SettingsModal from "./SettingsModal.jsx";
+import LanguageSelector from "./LanguageSelector.jsx";
+import EligibilityModal from "./EligibilityModal.jsx";
+import AdminDashboard from "./AdminDashboard.jsx";
 import api, { setAccessToken } from "./services/api";
 
-
-export default function ChatWindow() {
+export default function ChatWindow({ defaultOpenAdmin = false }) {
   const {
     prompt,
     setPrompt,
@@ -19,6 +21,13 @@ export default function ChatWindow() {
     setPrevChats,
     setNewChat,
     setIsAuthenticated,
+    user,
+    language,
+    setLanguage,
+    isEligibilityOpen,
+    setIsEligibilityOpen,
+    isAdminOpen,
+    setIsAdminOpen,
     theme,
     toggleTheme,
   } = useContext(MyContext);
@@ -45,21 +54,46 @@ export default function ChatWindow() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  useEffect(() => {
+    if (defaultOpenAdmin) {
+      setIsAdminOpen(true);
+    }
+  }, [defaultOpenAdmin]);
+
   const fetchAIReply = async (messageText) => {
     if (!messageText.trim() || loading) return;
 
+    const userMsg = messageText.trim();
     setLoading(true);
     setNewChat(false);
+    setPrompt("");
+
+    // Add user message to conversation immediately
+    setPrevChats((prev) => [
+      ...prev,
+      { role: "user", content: userMsg }
+    ]);
 
     try {
         const { data } = await api.post(
             "/api/chat",
             {
-                message: messageText,
+                message: userMsg,
                 threadId: currThreadId,
+                language: language || "en"
             }
         );
 
+        // Add assistant reply with citations and RAG provenance flag
+        setPrevChats((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: data.reply,
+            citations: data.citations || [],
+            ragUsed: data.ragUsed || false
+          }
+        ]);
         setReply(data.reply);
     }
     catch (err) {
@@ -69,7 +103,7 @@ export default function ChatWindow() {
     finally {
         setLoading(false);
     }
-};
+  };
 
   const getReply = () => fetchAIReply(prompt);
 
@@ -136,17 +170,7 @@ export default function ChatWindow() {
     }
 };
 
-  useEffect(() => {
-    if (prompt && reply) {
-      setPrevChats((prev) => [
-        ...prev,
-        { role: "user", content: prompt },
-        { role: "assistant", content: reply },
-      ]);
-      setPrompt("");
-      setReply(null);
-    }
-  }, [reply, prompt, setPrevChats, setPrompt, setReply]);
+
 
   const handleLogOut = async () => {
 
@@ -172,10 +196,36 @@ export default function ChatWindow() {
   return (
     <div className="chatWindow">
       <nav className="navbar">
-        {/* Placeholder for left-side brand/title if needed */}
-        <div className="nav-left"></div>
+        <div className="nav-left">
+          <button
+            type="button"
+            className="btn-header-matcher"
+            onClick={() => setIsEligibilityOpen(true)}
+            title="Open guided Scheme Eligibility Matcher"
+          >
+            <i className="fa-solid fa-compass"></i>
+            <span className="btn-label-text">Scheme Matcher</span>
+          </button>
+        </div>
 
         <div className="nav-right">
+          <LanguageSelector
+            currentLanguage={language}
+            onChange={(lang) => setLanguage(lang)}
+          />
+
+          {user?.role === "admin" && (
+            <button
+              type="button"
+              className="btn-header-admin"
+              onClick={() => setIsAdminOpen(true)}
+              title="Open Admin Governance Console"
+            >
+              <i className="fa-solid fa-screwdriver-wrench"></i>
+              <span className="btn-label-text">Admin Console</span>
+            </button>
+          )}
+
           <div className="userIconDiv" onClick={() => setIsOpen(!isOpen)}>
             <span className="userIcon">
               <i className="fa-solid fa-user"></i>
@@ -207,6 +257,17 @@ export default function ChatWindow() {
               >
                 <i className="fa-solid fa-gear"></i> Settings
               </div>
+              {user?.role === "admin" && (
+                <div 
+                  className="dropDownItem"
+                  onClick={() => {
+                    setIsAdminOpen(true);
+                    setIsOpen(false);
+                  }}
+                >
+                  <i className="fa-solid fa-screwdriver-wrench"></i> Admin Console
+                </div>
+              )}
               <div className="dropDownItem logout" onClick={handleLogOut}>
                 <i className="fa-solid fa-arrow-right-from-bracket"></i> Log out
               </div>
@@ -235,6 +296,21 @@ export default function ChatWindow() {
         />
       )}
 
+      {/* Citizen Eligibility Matcher Modal */}
+      <EligibilityModal
+        isOpen={isEligibilityOpen}
+        onClose={() => setIsEligibilityOpen(false)}
+        onSelectSchemeForChat={(query) => fetchAIReply(query)}
+      />
+
+      {/* Admin Governance Dashboard */}
+      {isAdminOpen && (
+        <AdminDashboard
+          user={user}
+          onClose={() => setIsAdminOpen(false)}
+        />
+      )}
+
       <main className="chatArea">
         <Chat />
         {loading && (
@@ -248,7 +324,7 @@ export default function ChatWindow() {
         <div className="gemini-input-wrapper">
           <div className={`input-pill ${isRecording ? "recording-pulse" : ""}`}>
             <input
-              placeholder={isRecording ? "Listening..." : "Enter a prompt here"}
+              placeholder={isRecording ? "Listening..." : "Ask JanSahayak about any scheme, subsidy, documents, or eligibility..."}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => (e.key === "Enter" ? getReply() : "")}
@@ -258,7 +334,7 @@ export default function ChatWindow() {
               <button
                 className={`icon-btn mic-btn ${isRecording ? "active" : ""}`}
                 onClick={isRecording ? stopRecording : startRecording}
-                title="Use microphone"
+                title="Use microphone (Sarvam AI Speech-to-Text)"
               >
                 <i className={`fa-solid ${isRecording ? "fa-stop" : "fa-microphone"}`}></i>
               </button>
@@ -272,7 +348,9 @@ export default function ChatWindow() {
               </button>
             </div>
           </div>
-          <p className="disclaimer">Bodhi AI may display inaccurate info, so double-check its responses.</p>
+          <p className="disclaimer">
+            <i className="fa-solid fa-shield-halved"></i> JanSahayak provides guidance based on official government records. Verify final requirements on myscheme.gov.in or at the nearest CSC.
+          </p>
         </div>
       </footer>
     </div>

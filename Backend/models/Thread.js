@@ -1,16 +1,24 @@
 import mongoose from "mongoose";
 
+const CitationSchema = new mongoose.Schema({
+    schemeId: { type: String },
+    schemeTitle: { type: String },
+    chunkType: { type: String },
+    sourceUrl: { type: String },
+    relevanceScore: { type: Number }
+}, { _id: false });
+
 const MessageSchema = new mongoose.Schema({
     role: {
         type: String,
         enum: ["user", "assistant"],
         required: true,
     },
-    
     content: {
         type: String,
         required: true,
     },
+    citations: [CitationSchema],
     timestamp: {
         type: Date,
         default: Date.now
@@ -21,10 +29,21 @@ const ThreadSchema = new mongoose.Schema({
     threadId: {
         type: String,
         required: true,
+        index: true
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        index: true
     },
     title: {
         type: String,
         required: true,
+    },
+    mode: {
+        type: String,
+        enum: ["auto", "schemes", "general"],
+        default: "auto"
     },
     messages: [MessageSchema],
     createdAt: {
@@ -45,10 +64,16 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
+        unique: true
     },
     password: {
         type: String,
         required: true,
+    },
+    preferredLanguage: {
+        type: String,
+        enum: ["en", "hi", "mr", "ta", "te", "bn", "gu", "kn", "pa"],
+        default: "en"
     },
     refreshToken: {
         type: String,
@@ -59,6 +84,12 @@ const userSchema = new mongoose.Schema({
         enum: ["free", "pro", "ultra"],
         default: "free",
     },
+    role: {
+        type: String,
+        enum: ["user", "admin"],
+        default: "user",
+        index: true
+    },
     threads: [ThreadSchema],
     createdAt: {
         type: Date,
@@ -67,6 +98,6 @@ const userSchema = new mongoose.Schema({
 });
 
 let Thread = mongoose.model("Thread", ThreadSchema);
-let User =  mongoose.model("User", userSchema);
+let User = mongoose.model("User", userSchema);
 
-export {Thread, User};
+export { Thread, User };

@@ -4,35 +4,37 @@ import { MyContext } from "./MyContext";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
+import Citation from "./Citation";
 
 export default function Chat() {
-  const { newChat, prevChats, reply, setPrompt } = useContext(MyContext);
+  const { newChat, prevChats, reply, setPrompt, setIsEligibilityOpen } = useContext(MyContext);
   const [latestReply, setLatestReply] = useState(null);
 
   const suggestions = [
     {
-      icon: "fa-brain",
-      title: "Explain concepts",
-      desc: "Explain quantum computing in simple terms for a beginner",
-      prompt: "Explain quantum computing in simple terms for a beginner"
+      icon: "fa-compass",
+      title: "Scheme Matching",
+      desc: "What government schemes might match my situation and occupation?",
+      prompt: "What government schemes might match my situation? I am looking for welfare, subsidy, and financial assistance programs.",
+      isEligibilityCta: true
     },
     {
-      icon: "fa-code",
-      title: "Analyze & Debug",
-      desc: "Help me find a bug in my React component routing",
-      prompt: "Help me find a bug in my React component routing"
+      icon: "fa-clipboard-list",
+      title: "Required Documents",
+      desc: "What documents does this scheme require before applying?",
+      prompt: "What documents are required to apply for Pradhan Mantri Awas Yojana (PMAY)?"
     },
     {
-      icon: "fa-pen-fancy",
-      title: "Write & Edit",
-      desc: "Draft a professional email proposing a project update",
-      prompt: "Draft a professional email proposing a project update"
+      icon: "fa-list-ol",
+      title: "How to Apply",
+      desc: "How do I apply step-by-step for Ayushman Bharat (AB-PMJAY)?",
+      prompt: "How do I apply step-by-step for Ayushman Bharat (AB-PMJAY) health insurance?"
     },
     {
-      icon: "fa-lightbulb",
-      title: "Brainstorm ideas",
-      desc: "List 5 creative startup names using artificial intelligence",
-      prompt: "List 5 creative startup names using artificial intelligence"
+      icon: "fa-clock-rotate-left",
+      title: "Check Scheme Updates",
+      desc: "Has the official eligibility or benefits information changed recently?",
+      prompt: "Has the official information or eligibility criteria changed for PM-KISAN recently?"
     }
   ];
 
@@ -44,7 +46,7 @@ export default function Chat() {
 
     if (!prevChats?.length) return;
 
-    const content = reply.split(" "); //individual words
+    const content = reply.split(" "); // individual words
 
     let idx = 0;
     const interval = setInterval(() => {
@@ -57,20 +59,42 @@ export default function Chat() {
     return () => clearInterval(interval);
   }, [prevChats, reply]);
 
+  const lastMessage = prevChats?.length ? prevChats[prevChats.length - 1] : null;
+
   return (
     <div className="chats">
       {newChat ? (
         <div className="welcome-container">
-          <h1 className="welcome-title">Bodhi AI</h1>
+          <div className="welcome-badge">
+            <i className="fa-solid fa-flag-checkered"></i> JanSahayak — Citizen Scheme Assistant
+          </div>
+          <h1 className="welcome-title">Bodhi AI — JanSahayak</h1>
           <p className="welcome-subtitle">
-            Your premium cognitive workspace. Ask questions, analyze data, brainstorm, and create.
+            Your verified assistant for Indian Government Schemes, citizen eligibility, welfare benefits, required documents, and application guidance.
           </p>
+          <div className="welcome-hero-action">
+            <button
+              type="button"
+              className="btn-eligibility-hero"
+              onClick={() => setIsEligibilityOpen(true)}
+              title="Open the guided Scheme Matcher Form"
+            >
+              <i className="fa-solid fa-compass"></i> Check My Scheme Eligibility (Guided Form)
+            </button>
+          </div>
+
           <div className="suggestions-grid">
             {suggestions.map((item, idx) => (
               <div
                 className="suggestion-card"
                 key={idx}
-                onClick={() => setPrompt(item.prompt)}
+                onClick={() => {
+                  if (item.isEligibilityCta) {
+                    setIsEligibilityOpen(true);
+                  } else {
+                    setPrompt(item.prompt);
+                  }
+                }}
               >
                 <div className="suggestion-icon">
                   <i className={`fa-solid ${item.icon}`}></i>
@@ -91,32 +115,63 @@ export default function Chat() {
             ) : (
               <div className="gptDiv" key={idx}>
                 <div className="ai-avatar">
-                  <i className="fa-solid fa-compass-drafting"></i>
+                  <i className="fa-solid fa-shield-halved"></i>
                 </div>
                 <div className="ai-content">
                   <ReactMarkdown rehypePlugins={rehypeHighlight}>
                     {chat.content}
                   </ReactMarkdown>
+                  {(chat.ragUsed || (chat.citations && chat.citations.length > 0)) && (
+                    <div className="ai-content-footer">
+                      {chat.ragUsed && (
+                        <span className="rag-sourced-badge">
+                          <i className="fa-solid fa-database"></i>
+                          Backed by official scheme data
+                        </span>
+                      )}
+                      {chat.citations && chat.citations.length > 0 && (
+                        <Citation citations={chat.citations} />
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             )
           ))}
 
-          {prevChats.length > 0 && (
-            <div className="gptDiv" key="last-msg">
-              <div className="ai-avatar">
-                <i className="fa-solid fa-compass-drafting"></i>
+          {lastMessage && (
+            lastMessage.role === "user" ? (
+              <div className="userDiv" key="last-user">
+                <p className="userMessage">{lastMessage.content}</p>
               </div>
-              <div className="ai-content">
-                <ReactMarkdown rehypePlugins={rehypeHighlight}>
-                  {latestReply == null ? prevChats[prevChats.length - 1].content : latestReply}
-                </ReactMarkdown>
+            ) : (
+              <div className="gptDiv" key="last-assistant">
+                <div className="ai-avatar">
+                  <i className="fa-solid fa-shield-halved"></i>
+                </div>
+                <div className="ai-content">
+                  <ReactMarkdown rehypePlugins={rehypeHighlight}>
+                    {latestReply == null ? lastMessage.content : latestReply}
+                  </ReactMarkdown>
+                  {(lastMessage.ragUsed || (lastMessage.citations && lastMessage.citations.length > 0)) && (
+                    <div className="ai-content-footer">
+                      {lastMessage.ragUsed && (
+                        <span className="rag-sourced-badge">
+                          <i className="fa-solid fa-database"></i>
+                          Backed by official scheme data
+                        </span>
+                      )}
+                      {lastMessage.citations && lastMessage.citations.length > 0 && (
+                        <Citation citations={lastMessage.citations} />
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            )
           )}
         </>
       )}
     </div>
   );
 }
-

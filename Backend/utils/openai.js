@@ -1,10 +1,26 @@
 import 'dotenv/config';
 
-const getOpenAPIResponse = async (message) => {
+/**
+ * Sends chat completion requests to OpenRouter with fallback models.
+ * Accepts either a single string message (legacy) or an array of message objects:
+ * [{ role: "system"|"user"|"assistant", content: string }]
+ */
+const getOpenAPIResponse = async (input) => {
+    // Standardize input into messages array
+    let messagesPayload = [];
+    if (typeof input === "string") {
+        messagesPayload = [{ role: "user", content: input }];
+    } else if (Array.isArray(input)) {
+        messagesPayload = input;
+    } else {
+        throw new Error("Invalid message input provided to getOpenAPIResponse");
+    }
+
     const models = [
-        "openrouter/free",
         "liquid/lfm-2.5-2.6b:free",
-        "z-ai/glm-5.2:free"
+        "openrouter/free",
+        "meta-llama/llama-3.2-3b-instruct:free",
+        "mistralai/mistral-7b-instruct:free"
     ];
 
     let lastError = null;
@@ -17,15 +33,15 @@ const getOpenAPIResponse = async (message) => {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
                     "HTTP-Referer": "http://localhost:5173",
-                    "X-Title": "SigmaGPT"
+                    "X-Title": "Bodhi AI - JanSahayak"
                 },
                 body: JSON.stringify({
                     model: model,
-                    messages: [{
-                        role: "user",
-                        content: message,
-                    }]
-                })
+                    messages: messagesPayload,
+                    temperature: 0.4,
+                    max_tokens: 1500
+                }),
+                signal: AbortSignal.timeout(15000)
             });
 
             const data = await response.json();
@@ -36,7 +52,7 @@ const getOpenAPIResponse = async (message) => {
                 continue;
             }
 
-            if (!data.choices || !data.choices.length) {
+            if (!data.choices || !data.choices.length || !data.choices[0].message) {
                 console.warn(`[OpenRouter] Model ${model} returned no choices.`);
                 lastError = new Error(`No response received from model ${model}`);
                 continue;
@@ -44,7 +60,8 @@ const getOpenAPIResponse = async (message) => {
 
             return data.choices[0].message.content;
         } catch (err) {
-            console.error(`[OpenRouter] Error with model ${model}:`, err.message);
+            const isTimeout = err.name === "TimeoutError" || err.message?.includes("aborted");
+            console.warn(`[OpenRouter] ${isTimeout ? "Timeout (15s)" : "Error"} with model ${model}:`, err.message);
             lastError = err;
         }
     }

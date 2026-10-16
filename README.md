@@ -1,518 +1,292 @@
-# Bodhi AI 🤖
+# Bodhi AI — JanSahayak 🇮🇳
+### Intelligent Government Scheme & Public Services Assistant (RAG Platform)
 
-A full-stack AI chat application where users can interact with an AI assistant, manage conversations, switch between dark and light themes, use voice input, and securely manage their accounts.
-
-🔗 **Live Demo:** https://bodhi-ai-eight.vercel.app
-
----
-
-## Tech Stack
-
-| **Layer**          | **Technology**                  |
-| ------------------ | ------------------------------- |
-| Frontend           | React.js                        |
-| Build Tool         | Vite                            |
-| Backend            | Node.js                         |
-| Framework          | Express.js                      |
-| Database           | MongoDB + Mongoose              |
-| Authentication     | JWT + Refresh Token             |
-| Password Security  | Bcrypt                          |
-| AI Integration     | OpenRouter API                  |
-| AI Model           | GPT-OSS-20B                     |
-| Speech-to-Text     | Sarvam AI                       |
-| HTTP Client        | Axios                           |
-| Styling            | CSS3                            |
-| Markdown Rendering | React Markdown + Highlight.js   |
-| Routing            | React Router                    |
-| File Upload        | Multer                          |
-| Security           | Helmet + Express Mongo Sanitize |
-| Rate Limiting      | Express Rate Limit              |
-| Deployment         | Vercel                          |
+An AI assistant and semantic retrieval-augmented generation (RAG) platform that helps Indian citizens discover, understand, and navigate 2,000+ Central and State Government welfare schemes, eligibility rules, financial subsidies, document checklists, and application procedures in **English**, **Hindi (हिन्दी)**, and **Marathi (मराठी)**.
 
 ---
 
-## Features
+## 🌟 Core Architecture & Features
 
-* **AI Chat** — Interact with an AI assistant and receive intelligent responses
-* **Chat Threads** — Create and manage multiple conversations
-* **Conversation History** — Store and retrieve previous chat messages from MongoDB
-* **Thread Management** — View, switch between, and delete previous conversations
-* **AI Response Streaming Experience** — Clean chat interface for interacting with AI responses
-* **Markdown Support** — Render AI responses using React Markdown
-* **Code Highlighting** — Syntax highlighting for code blocks in AI responses
-* **Voice Input** — Record audio and convert speech to text using Sarvam AI
-* **User Authentication** — Secure signup and login system
-* **JWT Authentication** — Short-lived access tokens with refresh-token based session management
-* **Secure Passwords** — Passwords are hashed using Bcrypt
-* **Automatic Token Refresh** — Axios interceptor automatically refreshes expired access tokens
-* **HTTP-Only Refresh Cookie** — Refresh tokens are securely stored using HTTP-only cookies
-* **Profile Management** — View account information and subscription plan
-* **Change Password** — Authenticated users can securely change their password
-* **Dark & Light Mode** — Switch between dark and light themes
-* **Persistent Theme** — Selected theme is stored in browser local storage
-* **Responsive UI** — Responsive chat interface for different screen sizes
-* **Subscription Plans UI** — Free, Pro and Ultra plan interface
-* **API Rate Limiting** — Protection against excessive signup, login, API and AI requests
-* **NoSQL Injection Protection** — MongoDB query sanitization using Express Mongo Sanitize
-* **Security Headers** — Helmet-based application security
-* **CORS Protection** — Controlled frontend-to-backend cross-origin access
-* **Input Validation** — Server-side validation for signup and login requests
+- 🇮🇳 **Verified Government Scheme Retrieval (RAG)** — Grounded answers citing official portals (`myscheme.gov.in`, `pmkisan.gov.in`, etc.) with traceable section chunks and verified links.
+- 🌾 **Citizen-Centric Welfare Coverage** — Agriculture (PM-KISAN), healthcare (Ayushman Bharat), housing (PMAY), street vendor micro-loans (PM SVANidhi), pensions (IGNOAPS), and educational scholarships.
+- ⚡ **Dual-Mode Intelligence** — Automatically detects government scheme queries to retrieve verified data while preserving general conversational chat for general topics.
+- 🎙️ **Multilingual Voice Input** — Native speech-to-text powered by Sarvam AI (`saaras:v3`) supporting 10 Indian languages.
+- 🔄 **Incremental Refresh & Section-Level Change Tracking** — Automated scheduler and admin trigger detecting modifications in eligibility, benefits, or documents without re-indexing unchanged text.
+- 🛡️ **Enterprise Security & Reliability** — SSRF prevention, citizen PII redaction (Aadhaar/PAN/phone/email), prompt injection neutralization, rate limiting, and server-side admin authorization.
+- 📊 **Administrative Oversight Dashboard** — Full system metrics, real-time ingestion jobs, granular change audit logs, deep scheme inspectors, and manual crawl controls.
 
 ---
 
-## Project Structure
+## 💻 Tech Stack & System Requirements
 
-```text
-Bodhi-AI/
-├── Backend/
-│   ├── middleware/
-│   │   ├── authMiddleware.js       # JWT authentication middleware
-│   │   ├── authValidation.js       # Signup and login validation
-│   │   ├── rateLimiter.js          # API and AI rate limiting
-│   │   └── upload.js               # Audio upload configuration
-│   │
-│   ├── models/
-│   │   └── Thread.js                # User and conversation schemas
-│   │
-│   ├── routes/
-│   │   ├── chat.js                 # AI chat, threads and transcription routes
-│   │   └── user.js                 # Authentication and user routes
-│   │
-│   ├── utils/
-│   │   ├── openai.js               # OpenRouter AI integration
-│   │   └── token.js                # Access and refresh token generation
-│   │
-│   ├── server.js                   # Backend entry point
-│   └── package.json                # Backend dependencies
-│
-├── Frontend/
-│   ├── public/
-│   │   ├── gptlogo.png             # Application logo
-│   │   └── icons.svg               # UI icons
-│   │
-│   ├── src/
-│   │   ├── assets/
-│   │   │   └── blacklogo.png       # Logo asset
-│   │   │
-│   │   ├── context/
-│   │   │   └── AuthContext.jsx     # Authentication context
-│   │   │
-│   │   ├── services/
-│   │   │   └── api.js              # Axios API configuration
-│   │   │
-│   │   ├── App.jsx                 # Main application and routing
-│   │   ├── Chat.jsx                # Chat message rendering
-│   │   ├── Chat.css                # Chat styling
-│   │   ├── ChatWindow.jsx           # Main chat interface
-│   │   ├── ChatWindow.css           # Chat window styling
-│   │   ├── Login.jsx               # Login page
-│   │   ├── Login.css               # Login styling
-│   │   ├── Signin.jsx              # Signup page
-│   │   ├── Signin.css              # Signup styling
-│   │   ├── Sidebar.jsx             # Chat history sidebar
-│   │   ├── Sidebar.css              # Sidebar styling
-│   │   ├── ProfileCard.jsx          # User profile card
-│   │   ├── ProfileCard.css          # Profile styling
-│   │   ├── SettingsModal.jsx        # Settings and account management
-│   │   ├── SettingsModal.css        # Settings styling
-│   │   ├── MyContext.jsx            # Global application context
-│   │   ├── App.css                 # Application styles
-│   │   └── index.css               # Global styles
-│   │
-│   ├── index.html                  # Frontend HTML entry point
-│   ├── vite.config.js              # Vite configuration
-│   ├── vercel.json                 # Vercel deployment configuration
-│   └── package.json                # Frontend dependencies
-│
-├── vercel.json                     # Root Vercel configuration
-└── README.md                       # Project documentation
-```
+### Required Software & Versions
+| Software | Recommended Version | Minimum Version | Notes |
+| :--- | :--- | :--- | :--- |
+| **Node.js** | `v20.x` (LTS) | `v18.18.0` | Required for ES Modules (`"type": "module"`) |
+| **npm** | `v10.x` | `v9.x` | Bundled with Node.js |
+| **MongoDB** | `v7.0` | `v6.0` | Local standalone or MongoDB Atlas (M0 Free Tier) |
+| **Ollama** | `v0.4+` | `v0.1.30+` | Local embedding inference (`nomic-embed-text`, free) |
+| **Docker** (Optional) | `v24.x+` | `v20.x` | For containerized deployment |
+| **Docker Compose** | `v2.x+` | `v1.29` | Multi-container local orchestration |
+| **OS** | Windows 10/11, macOS, Linux | Any | Fully tested on Windows PowerShell |
 
 ---
 
-## Getting Started
+## 📋 Environment Variables Reference
 
-### Prerequisites
+### Backend (`Backend/.env`)
 
-* Node.js v18+
-* MongoDB Atlas account
-* OpenRouter API key
-* Sarvam AI API key
-* Vercel account for deployment
-
-### Installation
+Copy `Backend/.env.example` to `Backend/.env`:
 
 ```bash
-# Clone the repo
-git clone https://github.com/yourusername/bodhi-ai.git
-cd bodhi-ai
+cp Backend/.env.example Backend/.env
 ```
 
-### Backend Installation
+| Variable | Description | Example / Default |
+| :--- | :--- | :--- |
+| `PORT` | Backend server port | `5000` |
+| `NODE_ENV` | Runtime environment (`development`, `production`, `test`) | `development` |
+| `CLIENT_URL` | Allowed frontend origins for CORS | `http://localhost:5173,https://bodhi-ai-eight.vercel.app` |
+| `MONGODB_URL` | MongoDB connection URI (Atlas or Local) | `mongodb+srv://<user>:<pwd>@cluster.mongodb.net/bodhi_jansahayak` |
+| `JWT_SECRET` | 64-char hex key for short-lived access tokens | `node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"` |
+| `JWT_EXPIRE` | JWT access token lifespan | `15m` |
+| `REFRESH_TOKEN_SECRET` | 64-char hex key for HTTP-only refresh tokens | `node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"` |
+| `REFRESH_TOKEN_EXPIRE` | Refresh token lifespan | `7d` |
+| `ADMIN_EMAIL` | Citizen email granted admin dashboard privileges | `admin@jansahayak.gov.in` |
+| `ADMIN_API_KEY` | Master key for CLI/cron background runners | `master_admin_secret_key_32_chars_min` |
+| `OPENAI_API_KEY` | OpenRouter API Key for chat LLMs | `sk-or-v1-...` ([Get key](https://openrouter.ai/keys)) |
+| `SARVAM_API_KEY` | Sarvam AI API Key for Indian voice transcription | `sk_...` ([Get key](https://sarvam.ai)) |
+| `OLLAMA_BASE_URL` | Base address for local Ollama embedding instance | `http://localhost:11434` |
+| `EMBEDDING_MODEL` | Embedding model identifier | `nomic-embed-text` |
+| `EMBEDDING_DIMENSIONS` | Vector embedding dimension size | `768` |
+| `USE_ATLAS_VECTOR_SEARCH` | Set `true` for Atlas M10+ `$vectorSearch`, `false` for M0 in-memory hybrid search | `false` |
+| `SCHEME_REFRESH_ENABLED` | Enable automated background cron in this web process | `false` |
+| `SCHEME_REFRESH_CRON` | Cron schedule expression | `0 2 * * 0` (Every Sunday at 2:00 AM) |
+| `SCHEME_REFRESH_TIMEZONE`| Scheduler timezone | `Asia/Kolkata` |
+| `SCHEME_INGEST_SOURCE` | Dataset file path or verified government URL | `pipeline/fixtures/sample-schemes.json` |
+
+### Frontend (`Frontend/.env.local`)
+
+Copy `Frontend/.env.example` to `Frontend/.env.local`:
 
 ```bash
+cp Frontend/.env.example Frontend/.env.local
+```
+
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `VITE_API_URL` | Backend API base address | `http://localhost:5000` |
+
+---
+
+## 🚀 Local Installation & Setup Instructions
+
+### 1. Clone the Repository
+Open Windows PowerShell (or terminal):
+```powershell
+git clone https://github.com/shantanu-07l/Bodhi-AI.git
+cd Bodhi-AI
+```
+
+### 2. Configure Environment Files
+```powershell
+# Copy backend template and add your credentials
+Copy-Item Backend\.env.example Backend\.env
+
+# Copy frontend template
+Copy-Item Frontend\.env.example Frontend\.env.local
+```
+
+### 3. Install Dependencies
+```powershell
+# Install Backend packages
+cd Backend
+npm install
+
+# Install Frontend packages
+cd ..\Frontend
+npm install
+cd ..
+```
+
+### 4. Pull the Embedding Model (Ollama)
+Ensure Ollama is installed and running, then pull the local embedding model (free, ~274 MB, run once):
+```powershell
+ollama pull nomic-embed-text
+```
+
+### 5. Seed Initial Scheme Records & Vectors
+From the `Backend` directory, populate MongoDB with verified government schemes:
+```powershell
 cd Backend
 
-# Install dependencies
-npm install
+# Seed 15 flagship national schemes (fast bootstrap)
+npm run seed -- --limit 15
+
+# (Optional) Seed 60 popular welfare schemes
+npm run seed -- --limit 60
 ```
 
-### Frontend Installation
+### 6. Start the Application
+Open two PowerShell terminals:
 
-```bash
-cd ../Frontend
-
-# Install dependencies
-npm install
-```
-
----
-
-## Environment Variables
-
-### Backend
-
-Create a `.env` file inside the `Backend` directory:
-
-```env
-MONGODB_URL=mongodb+srv://<username>:<password>@cluster.mongodb.net/bodhi-ai
-
-JWT_SECRET=your_jwt_secret
-JWT_EXPIRE=your_access_token_expiry
-
-REFRESH_TOKEN_SECRET=your_refresh_token_secret
-REFRESH_TOKEN_EXPIRE=your_refresh_token_expiry
-
-OPENAI_API_KEY=your_openrouter_api_key
-
-SARVAM_API_KEY=your_sarvam_api_key
-
-CLIENT_URL=http://localhost:5173
-
-NODE_ENV=development
-```
-
-### Frontend
-
-Create a `.env` file inside the `Frontend` directory:
-
-```env
-VITE_API_URL=http://localhost:5000
-```
-
-> **Important:** Never commit `.env` files or expose API keys, JWT secrets, database credentials, or other sensitive information publicly.
-
----
-
-## Run Locally
-
-### Start Backend
-
-```bash
+**Terminal 1 (Backend Server):**
+```powershell
 cd Backend
-
-node server.js
-
-# or with nodemon
-npx nodemon server.js
-```
-
-Backend runs at:
-
-```text
-http://localhost:5000
-```
-
-### Start Frontend
-
-Open another terminal:
-
-```bash
-cd Frontend
-
 npm run dev
+# Server listening at http://localhost:5000
 ```
 
-Frontend runs at:
-
-```text
-http://localhost:5173
+**Terminal 2 (Frontend Client):**
+```powershell
+cd Frontend
+npm run dev
+# Vite client ready at http://localhost:5173
 ```
+
+Visit **`http://localhost:5173`** in your browser.
 
 ---
 
-## Deployment (Vercel)
+## 🧪 Testing, Quality Assurance, and RAG Evaluation
 
-### Frontend Deployment
+The application includes automated unit, integration, security, and benchmark evaluation suites:
 
-1. Push the project to GitHub
-2. Create a new project on **Vercel**
-3. Connect your GitHub repository
-4. Set the frontend project directory to:
+```powershell
+cd Backend
 
-```text
-Frontend
+# Run the complete 86-test automated regression & safety suite
+npm test
+
+# Run individual test suites
+npm run test:ingest     # Data ingestion and normalization tests
+npm run test:vector     # Semantic chunking and vector indexing tests
+npm run test:rag        # RAG prompt generation and citation tests
+npm run test:refresh    # Refresh pipeline and change tracking tests
+npm run test:ui         # Multilingual prompts and admin auth tests
+npm run test:security   # SSRF, PII redaction, prompt injection tests
+npm run eval:rag        # Programmatic Recall@K and MRR benchmark
 ```
 
-5. Set the build command:
+### Measured RAG Evaluation Benchmark Results:
+- **Retrieval Recall@1:** **100.0%** (Target: $\ge 75\%$)
+- **Retrieval Recall@3:** **100.0%** (Target: $\ge 85\%$)
+- **Retrieval Recall@5:** **100.0%** (Target: $\ge 90\%$)
+- **Mean Reciprocal Rank (MRR):** **1.000** (Target: $\ge 0.80$)
+- **Citation Correctness:** **100.0%** (Target: $\ge 85\%$)
+- **Abstention on Fictitious Queries:** **100.0%** (Target: $100\%$)
+- **Average Retrieval Latency:** **326.6 ms**
 
-```bash
-npm run build
+---
+
+## 🔄 Scheme Ingestion, Refresh Worker, and Job Monitoring
+
+### Running the Scraper / Refresh Worker Separately
+To prevent heavy crawling or indexing from consuming web server memory, run the refresh worker as a decoupled process or cron container:
+
+```powershell
+cd Backend
+
+# Run an immediate refresh cycle using default dataset
+npm run refresh
+
+# Run a dry-run without writing to MongoDB
+npm run refresh -- --dry-run
+
+# Run against a specific scraper output file
+npm run refresh -- --source path/to/myscheme_output.json
 ```
 
-6. Set the output directory:
+### Managing Jobs via Admin API & Dashboard
+Authenticate with an admin account or pass `x-admin-key: <ADMIN_API_KEY>` in headers:
+- `GET /api/schemes/refresh/status` — View scheduler configuration, cron state, and latest execution.
+- `GET /api/schemes/refresh/jobs` — Paginated history of all past refresh jobs.
+- `GET /api/schemes/refresh/changes` — Audit log of section-level modifications (eligibility, benefits, documents).
+- `GET /api/schemes/inspect/:schemeId` — Deep inspector for scheme records, version history, and active chunks.
+- `POST /api/schemes/refresh` — Trigger a manual refresh cycle (`{ "dryRun": false, "asyncRun": true }`).
 
-```text
-dist
+---
+
+## 🐳 Docker Orchestration (Single-Command Setup)
+
+For an isolated, containerized demonstration with MongoDB persistence:
+
+```powershell
+# Build and start Backend, Frontend, and MongoDB with persistent volumes
+docker compose up --build -d
+
+# Check running container health
+docker compose ps
+
+# View backend logs
+docker compose logs -f backend
+
+# Stop all containers (data is safely preserved in jansahayak-mongo-data volume)
+docker compose down
 ```
 
-7. Add the frontend environment variable:
-
-```env
-VITE_API_URL=your_backend_api_url
-```
-
-8. Deploy the application
-
-### Backend Deployment
-
-The backend can be deployed as a Node.js server on a compatible hosting platform.
-
-Set the required environment variables in the hosting provider's dashboard:
-
-```env
-MONGODB_URL
-JWT_SECRET
-JWT_EXPIRE
-REFRESH_TOKEN_SECRET
-REFRESH_TOKEN_EXPIRE
-OPENAI_API_KEY
-SARVAM_API_KEY
-CLIENT_URL
-NODE_ENV
-```
-
-> **Note:** Environment variables should be configured through the deployment platform dashboard rather than committing `.env` files to GitHub.
+### Container Endpoints:
+- **Frontend Web UI:** `http://localhost:5173`
+- **Backend API:** `http://localhost:5000`
+- **Backend Health Check:** `http://localhost:5000/api/health`
+- **MongoDB:** `localhost:27017`
 
 ---
 
-## API Routes
+## ☁️ Cloud Deployment Guide (Student & Production Options)
 
-### Authentication
+### Option A: Free Tier Demonstration (Vercel + Render + MongoDB Atlas)
+*Budget: \$0.00 / month (Recommended for student presentation)*
 
-| **Method** | **Route**          | **Description**                     |
-| ---------- | ------------------ | ----------------------------------- |
-| POST       | `/signin`          | Create a new user account           |
-| POST       | `/login`           | Authenticate user                   |
-| GET        | `/user`            | Get authenticated user information  |
-| POST       | `/change-password` | Change account password             |
-| POST       | `/refresh-token`   | Generate a new access token         |
-| POST       | `/logout`          | Logout and invalidate refresh token |
+1. **Database:** Create a free `M0` cluster on [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+   - In *Network Access*, add `0.0.0.0/0` (allow access from anywhere) or specific Render IPs.
+   - Copy connection string into `MONGODB_URL`.
+2. **Backend (Render):**
+   - Create a **Web Service** on [Render](https://render.com) connected to your repository.
+   - Root Directory: `Backend`
+   - Build Command: `npm ci`
+   - Start Command: `node server.js`
+   - Environment Variables: Set all variables from `Backend/.env.example`.
+3. **Frontend (Vercel):**
+   - Connect repository to [Vercel](https://vercel.com).
+   - Root Directory: `Frontend`
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+   - Environment Variable: `VITE_API_URL=https://your-backend-service.onrender.com`
 
-### Chat
+### Option B: Cloud VM / Docker VPS (DigitalOcean Droplet / AWS EC2)
+*Budget: ~\$5 – \$10 / month*
 
-| **Method** | **Route**         | **Description**                      |
-| ---------- | ----------------- | ------------------------------------ |
-| POST       | `/api/chat`       | Send message and receive AI response |
-| POST       | `/api/transcribe` | Convert uploaded audio to text       |
-
-### Threads
-
-| **Method** | **Route**               | **Description**                   |
-| ---------- | ----------------------- | --------------------------------- |
-| GET        | `/api/thread`           | Get all user conversation threads |
-| GET        | `/api/thread/:threadId` | Get conversation history          |
-| DELETE     | `/api/thread/:threadId` | Delete a conversation thread      |
-
----
-
-## Authentication Flow
-
-```text
-User Signup / Login
-        ↓
-Backend validates credentials
-        ↓
-Password verified using Bcrypt
-        ↓
-Access Token + Refresh Token generated
-        ↓
-Refresh Token stored in HTTP-only Cookie
-        ↓
-Access Token stored in Frontend memory
-        ↓
-Authenticated API Requests
-        ↓
-Access Token expires
-        ↓
-Axios Interceptor requests new Access Token
-        ↓
-User continues session
-```
+1. Provision an Ubuntu 22.04 LTS instance (1 vCPU, 2GB RAM).
+2. Install Docker & Docker Compose: `sudo apt update && sudo apt install docker-compose-plugin -y`.
+3. Clone repository and configure `.env` files.
+4. Run: `docker compose up --build -d`.
+5. Point DNS A-record to your server IP and add Caddy or Nginx for SSL (`https://`).
 
 ---
 
-## AI Chat Flow
+## 🛠️ Troubleshooting & Common Fixes
 
-```text
-User enters message
-        ↓
-Frontend sends request
-        ↓
-JWT Authentication
-        ↓
-Backend validates request
-        ↓
-AI Rate Limiter
-        ↓
-OpenRouter API
-        ↓
-GPT-OSS-20B Model
-        ↓
-AI Response
-        ↓
-Message saved to MongoDB
-        ↓
-Response returned to Frontend
-        ↓
-React renders AI response
-```
+| Issue | Cause | Resolution |
+| :--- | :--- | :--- |
+| **`MongooseServerSelectionError`** | IP not whitelisted in MongoDB Atlas | Go to MongoDB Atlas $\to$ **Network Access** $\to$ click **Add IP Address** $\to$ choose **Allow Access From Anywhere (`0.0.0.0/0`)**. |
+| **`Port 5000 in use`** | Previous Node process or Apple AirPlay using port | Run `netstat -ano \| findstr :5000` on Windows, find the PID, and kill it with `taskkill /F /PID <PID>`, or change `PORT=5001` in `.env`. |
+| **`API returned 401: Switched to local generator`** | OpenRouter embedding key missing or expired | The system automatically activates its circuit breaker and switches to deterministic 768-dim local vectors without crashing. Add a valid `OPENAI_API_KEY` in `.env` to restore OpenRouter API embeddings. |
+| **`Concurrency conflict: Refresh job is currently running`** | A previous crawl process exited abruptly while locked | Inspect `RefreshJob` in MongoDB. Delete or set `{ status: "failed" }` on the stuck job, or wait for the automatic 2-hour lock expiration. |
+| **`CORS Error in Browser`** | Frontend origin not listed in backend CORS | Ensure `CLIENT_URL` in `Backend/.env` includes your exact frontend origin (e.g., `http://localhost:5173`). |
 
 ---
 
-## Voice Input Flow
+## 🔒 Security Best Practices
 
-```text
-User records audio
-        ↓
-Frontend uploads audio file
-        ↓
-Multer receives audio
-        ↓
-Audio file validation
-        ↓
-Sarvam AI Speech-to-Text API
-        ↓
-English Transcript
-        ↓
-Transcript returned to Frontend
-        ↓
-User message generated
-```
+1. **Credentials:** Never commit `.env` or files containing API keys to Git. Both `Backend/.env` and `Frontend/.env.local` are explicitly listed in `.gitignore`.
+2. **Public Demonstration:** Do not publish live master admin API keys. When demonstrating, use a standard citizen account for chat exploration and showcase admin metrics via verified admin login.
+3. **SSRF Guard:** Only official domains (`*.gov.in`, `*.nic.in`, `myscheme.gov.in`) are allowed for remote scraper ingestion.
 
 ---
 
-## Security
+## ⚖️ License & Disclaimer
 
-Bodhi AI implements several security mechanisms:
+This project is developed for educational, academic final-year project, and portfolio purposes.
 
-* JWT-based authentication
-* Access and refresh token architecture
-* HTTP-only refresh-token cookies
-* Bcrypt password hashing
-* Login rate limiting
-* Signup rate limiting
-* AI request rate limiting
-* General API rate limiting
-* Helmet security headers
-* CORS restrictions
-* MongoDB/NoSQL injection sanitization
-* Server-side input validation
-* Audio file type validation
-* Audio file size limitation
-* Protected chat and thread routes
-* Automatic access-token refresh
-
----
-
-## Database Models
-
-The application uses MongoDB with Mongoose.
-
-### User
-
-Stores:
-
-* Username
-* Email
-* Hashed password
-* Refresh token
-* Subscription plan
-* User threads
-* Account creation date
-
-### Thread
-
-Stores:
-
-* Thread ID
-* Conversation title
-* Messages
-* Message roles
-* Message content
-* Message timestamps
-* Thread creation date
-* Thread update date
-
-### Message
-
-Each message contains:
-
-* `role` — user or assistant
-* `content` — message text
-* `timestamp` — message creation time
-
----
-
-## AI Integration
-
-Bodhi AI uses the **OpenRouter API** to communicate with the configured AI model.
-
-The backend sends the user's message to the AI service and receives the assistant response:
-
-```text
-Frontend
-   ↓
-Express API
-   ↓
-OpenRouter
-   ↓
-GPT-OSS-20B
-   ↓
-AI Response
-   ↓
-MongoDB
-   ↓
-Frontend
-```
-
----
-
-## Subscription Plans
-
-Bodhi AI currently provides a subscription-plan interface containing:
-
-| **Plan** | **Price**       | **Status**  |
-| -------- | --------------- | ----------- |
-| Free     | ₹0 / month      | Available   |
-| Pro      | ₹199 / month    | Coming Soon |
-| Ultra    | Available in UI | Coming Soon |
-
-> **Note:** The Pro and Ultra payment/upgrade functionality is currently under construction. The subscription interface is present, but paid-plan processing is not yet implemented.
-
----
-
-## Theme Support
-
-Bodhi AI supports:
-
-* 🌙 Dark Mode
-* ☀️ Light Mode
-
-The selected theme is stored in browser `localStorage`, allowing the user's theme preference to persist between sessions.
-
----
-
-## License
-
-This project is developed for educational, learning, and portfolio purposes.
+> **Legal Disclaimer:** JanSahayak is an informational assistant. It uses public scheme guidelines from official government portals. Official approval and financial disbursements depend exclusively on verification by the respective government department, state nodal officer, or Common Service Centre (CSC).

@@ -28,6 +28,21 @@ function App() {
   
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
+
+  // Language state (en, hi, mr)
+  const [language, setLanguageState] = useState(() => {
+    return localStorage.getItem("language") || "en";
+  });
+
+  const setLanguage = (lang) => {
+    setLanguageState(lang);
+    localStorage.setItem("language", lang);
+  };
+
+  // Modals
+  const [isEligibilityOpen, setIsEligibilityOpen] = useState(false);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
 
   // Theme Management (Dark / Light)
   const [theme, setTheme] = useState(() => {
@@ -62,6 +77,14 @@ function App() {
     setAllThreads,
     isAuthenticated,
     setIsAuthenticated,
+    user,
+    setUser,
+    language,
+    setLanguage,
+    isEligibilityOpen,
+    setIsEligibilityOpen,
+    isAdminOpen,
+    setIsAdminOpen,
     isCollapsed,
     setIsCollapsed,
     theme,
@@ -70,30 +93,22 @@ function App() {
   };
 
   useEffect(() => {
-
     const checkLogin = async () => {
-
-        try {
-
-            const { data } = await api.post(
-                "/refresh-token"
-            );
-
-            setAccessToken(data.accessToken);
-
-            setIsAuthenticated(true);
-
-        } catch (err) {
-
-            setIsAuthenticated(false);
-
+      try {
+        const { data } = await api.post("/refresh-token");
+        setAccessToken(data.accessToken);
+        if (data.user) {
+          setUser(data.user);
         }
-
+        setIsAuthenticated(true);
+      } catch (err) {
+        setIsAuthenticated(false);
+        setUser(null);
+      }
     };
 
     checkLogin();
-
-}, []);
+  }, []);
 
   return (
     <MyContext.Provider value={providerValues}>
@@ -138,6 +153,21 @@ function App() {
                   </button>
                   <Sidebar />
                   <ChatWindow />
+                </div>
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
+
+          {/* Admin Direct URL Route */}
+          <Route
+            path="/admin"
+            element={
+              isAuthenticated ? (
+                <div className="app">
+                  <Sidebar />
+                  <ChatWindow defaultOpenAdmin={true} />
                 </div>
               ) : (
                 <Navigate to="/login" replace />
