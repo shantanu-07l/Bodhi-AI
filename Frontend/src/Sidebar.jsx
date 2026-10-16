@@ -17,9 +17,6 @@ export default function Sidebar() {
         setCurrThreadId,
         setPrevChats,
         isCollapsed,
-        user,
-        setIsEligibilityOpen,
-        setIsAdminOpen,
         theme,
         toggleTheme,
     } = useContext(MyContext);
@@ -167,35 +164,36 @@ export default function Sidebar() {
 
                     <div className="sidebar-brand">
                         <span className="brand-logo">
-                            <i className="fa-solid fa-shield-halved"></i>
+                            <i className="fa-solid fa-compass-drafting"></i>
                         </span>
                         <div className="brand-text-wrapper">
-                            <div className="brand-main-row">
-                                <span className="brand-name">Bodhi AI</span>
-                                <span className="jansahayak-badge">JanSahayak</span>
-                            </div>
-                            <span className="brand-subtitle">Govt Scheme Assistant</span>
+                            <span className="brand-name">Bodhi AI</span>
+                            <span className={`plan-version-badge plan-badge-${userPlan}`}>
+                                {userPlan}
+                            </span>
                         </div>
                     </div>
 
                     <button
-                        className="new-chat-btn"
-                        onClick={createNewChat}
-                    >
-                        <div className="btn-left">
-                            <span className="btn-text">New Consultation</span>
-                        </div>
-                        <i className="fa-solid fa-plus"></i>
-                    </button>
 
-                    <button
-                        type="button"
-                        className="sidebar-matcher-btn"
-                        onClick={() => setIsEligibilityOpen(true)}
-                        title="Open Citizen Scheme Eligibility Matcher"
+                        className="new-chat-btn"
+
+                        onClick={createNewChat}
+
                     >
-                        <i className="fa-solid fa-compass"></i>
-                        <span>Scheme Matcher</span>
+
+                        <div className="btn-left">
+
+                            <span className="btn-text">
+
+                                New Chat
+
+                            </span>
+
+                        </div>
+
+                        <i className="fa-solid fa-pen-to-square"></i>
+
                     </button>
 
                     <ul className="history">
@@ -269,18 +267,6 @@ export default function Sidebar() {
                     </ul>
 
                     <div className="sidebar-footer">
-                        {user?.role === "admin" && (
-                            <button
-                                type="button"
-                                className="sidebar-admin-btn"
-                                onClick={() => setIsAdminOpen(true)}
-                                title="Open Administrator Governance Console"
-                            >
-                                <i className="fa-solid fa-screwdriver-wrench"></i>
-                                <span>Admin Console</span>
-                            </button>
-                        )}
-
                         <button 
                             className="sidebar-theme-toggle" 
                             onClick={toggleTheme}

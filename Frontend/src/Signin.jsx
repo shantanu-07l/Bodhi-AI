@@ -7,7 +7,7 @@ import { MyContext } from "./MyContext";
 const Signin = ({ setIsAuthenticated }) => {
 
     const navigate = useNavigate();
-    const { theme, toggleTheme, setUser } = useContext(MyContext);
+    const { theme, toggleTheme } = useContext(MyContext);
 
     const [formData, setFormData] = useState({
         username: "",
@@ -38,10 +38,6 @@ const Signin = ({ setIsAuthenticated }) => {
             if (data.accessToken) {
 
                 setAccessToken(data.accessToken);
-
-                if (data.user) {
-                    setUser(data.user);
-                }
 
                 setIsAuthenticated(true);
 

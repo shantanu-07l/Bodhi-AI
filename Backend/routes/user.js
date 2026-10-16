@@ -130,12 +130,17 @@ router.post("/signin",signupLimiter,signupValidation, async (req, res) => {
             message: "Signup Successful",
 
             user: {
+
                 id: newUser._id,
+
                 username: newUser.username,
+
                 email: newUser.email,
-                role: newUser.role || "user",
+
                 plan: newUser.plan || "free"
+
             },
+
             accessToken
 
         });
@@ -257,19 +262,24 @@ router.post("/login",loginLimiter,loginValidation, async (req, res) => {
         Response
         */
 
-        const isAdmin = (user.role === "admin") || (process.env.ADMIN_EMAIL && user.email.toLowerCase() === process.env.ADMIN_EMAIL.toLowerCase());
-        const role = isAdmin ? "admin" : (user.role || "user");
-
         return res.status(200).json({
+
             message: "Login Successful",
+
             user: {
+
                 id: user._id,
+
                 username: user.username,
+
                 email: user.email,
-                role,
+
                 plan: user.plan || "free"
+
             },
+
             accessToken
+
         });
 
     }
@@ -337,14 +347,16 @@ router.get("/user", async (req, res) => {
 
         }
 
-        const role = user.role || (process.env.ADMIN_EMAIL && user.email.toLowerCase() === process.env.ADMIN_EMAIL.toLowerCase() ? "admin" : "user");
-
         return res.status(200).json({
+
             id: user._id,
+
             username: user.username,
+
             email: user.email,
-            role,
+
             plan: user.plan || "free"
+
         });
 
     }
@@ -514,18 +526,10 @@ router.post("/refresh-token", async (req, res) => {
         Return New Access Token
         */
 
-        const isAdmin = (user.role === "admin") || (process.env.ADMIN_EMAIL && user.email.toLowerCase() === process.env.ADMIN_EMAIL.toLowerCase());
-        const role = isAdmin ? "admin" : (user.role || "user");
-
         return res.status(200).json({
-            accessToken,
-            user: {
-                id: user._id,
-                username: user.username,
-                email: user.email,
-                role,
-                plan: user.plan || "free"
-            }
+
+            accessToken
+
         });
 
     }
@@ -668,66 +672,5 @@ router.post("/logout", async (req, res) => {
 
 });
 
-/*
-==================================================
-CURRENT USER PROFILE
-GET /me
-==================================================
-*/
-router.get("/me", authMiddleware, async (req, res) => {
-    try {
-        const user = req.user;
-        const role = user.role || (process.env.ADMIN_EMAIL && user.email.toLowerCase() === process.env.ADMIN_EMAIL.toLowerCase() ? "admin" : "user");
-        res.json({
-            id: user._id,
-            username: user.username,
-            email: user.email,
-            role,
-            plan: user.plan || "free",
-            preferredLanguage: user.preferredLanguage || "en"
-        });
-    } catch (err) {
-        res.status(500).json({ error: "Failed to fetch user profile" });
-    }
-});
-
-/*
-==================================================
-ADMIN PROMOTION (Dev/Authorized Setup)
-POST /promote-admin
-==================================================
-*/
-router.post("/promote-admin", authMiddleware, async (req, res) => {
-    try {
-        const { adminKey, targetEmail } = req.body;
-        const validKey = process.env.ADMIN_API_KEY || "jansahayak_admin_key_secret";
-
-        // Allow if caller provides valid master key OR caller is already an admin
-        const callerIsAdmin = req.user.role === "admin" || (process.env.ADMIN_EMAIL && req.user.email === process.env.ADMIN_EMAIL);
-        const hasValidKey = adminKey && adminKey === validKey;
-
-        if (!callerIsAdmin && !hasValidKey) {
-            return res.status(403).json({ error: "Forbidden: Valid admin key or existing admin privilege required" });
-        }
-
-        const emailToPromote = targetEmail || req.user.email;
-        const user = await User.findOneAndUpdate(
-            { email: emailToPromote },
-            { role: "admin" },
-            { new: true }
-        );
-
-        if (!user) {
-            return res.status(404).json({ error: "User not found" });
-        }
-
-        res.json({
-            message: `User ${user.email} successfully promoted to admin`,
-            user: { id: user._id, email: user.email, role: user.role }
-        });
-    } catch (err) {
-        res.status(500).json({ error: "Failed to promote user" });
-    }
-});
 
 export default router;

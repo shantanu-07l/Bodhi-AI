@@ -38,14 +38,3 @@ export const aiLimiter = rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
 });
-
-// Schemes Exploration Limiter
-export const schemeLimiter = rateLimit({
-    windowMs: 60 * 1000, // 1 minute
-    max: 60,
-    message: {
-        error: "Too many scheme lookups. Please slow down."
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
